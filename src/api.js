@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE = "http://localhost:5000"; // Cambia esto a la URL de tu backend
+const API_BASE = "http://localhost:5000"; // Cambia esto a la URL del backend
 
 export const sendMessageToBot = async (message) => {
   try {

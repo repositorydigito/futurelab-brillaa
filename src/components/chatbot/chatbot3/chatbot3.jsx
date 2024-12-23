@@ -65,7 +65,7 @@ const Chatbot1 = () => {
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
       
-      <div className="bg-blue-900 w-full py-4 text-center shadow-lg">
+      <div className="bg-custom-blue-gradient w-full py-4 text-center shadow-lg">
         <h1 className="text-yellow-400 text-4xl font-bold">Generador de Promesa de Valor</h1>
         <p className="text-white">
           Crea tu propuesta de valor única en una experiencia interactiva
