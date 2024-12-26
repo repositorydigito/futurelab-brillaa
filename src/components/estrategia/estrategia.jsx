@@ -17,12 +17,10 @@ const Estrategia = () => {
   const handleSubmit = async () => {
     try {
       // Aquí se enviará la información al backend
-      alert("¡Información almacenada con éxito!");
       setShowModal(false);
       navigate("/chat3");
     } catch (error) {
       console.error("Error al enviar los datos:", error);
-      alert("Hubo un error al almacenar la información. Por favor, inténtalo nuevamente.");
       setShowModal(false);
       navigate("/chat3");
     }
