@@ -5,16 +5,10 @@ import { sendMessageToBot } from "../../../api";
 const PromesaFinal = () => {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [generatedText, setGeneratedText] = useState(
     "Cargando tu Promesa de Valor..."
   );
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-  });
 
-  // Simulación de obtención de datos desde el backend (IA)
   useEffect(() => {
     const fetchGeneratedText = async () => {
       try {
@@ -29,30 +23,8 @@ const PromesaFinal = () => {
     };
     fetchGeneratedText();
 
-    // Mostrar el popup automáticamente al cargar la página
     setShowPopup(true);
   }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      // Envía los datos al backend
-      const response = await sendMessageToBot({
-        action: "saveUserData",
-        data: formData,
-      });
-      setShowModal(false);
-      navigate("/cuestionario");
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
-      setShowModal(false);
-      navigate("/cuestionario");
-    }
-  };
 
   return (
     <div>
@@ -84,64 +56,13 @@ const PromesaFinal = () => {
             </button>
             <button
               className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
-              onClick={() => setShowModal(true)}
+              onClick={() => navigate("/cuestionario")}
             >
               Construir Estrategia
             </button>
           </div>
         </div>
       </div>
-
-      {/* Modal para Nombres y Correo Electrónico */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-8 w-96">
-            <h2 className="text-blue-900 text-xl font-bold mb-4">
-              Proporcione sus datos
-            </h2>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-semibold mb-2">
-                Nombre Completo
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-lg"
-                placeholder="Escribe tu nombre"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-semibold mb-2">
-                Correo Electrónico
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-lg"
-                placeholder="Escribe tu correo"
-              />
-            </div>
-            <div className="flex justify-end space-x-4">
-              <button
-                className="bg-gray-300 text-gray-700 rounded-lg px-4 py-2 hover:bg-gray-400"
-                onClick={() => setShowModal(false)}
-              >
-                Cancelar
-              </button>
-              <button
-                className="bg-blue-900 text-white rounded-lg px-4 py-2 hover:bg-blue-800"
-                onClick={handleSubmit}
-              >
-                Enviar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">

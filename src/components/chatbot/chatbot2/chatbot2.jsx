@@ -6,7 +6,7 @@ const Chatbot1 = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "¡Gracias por tus respuestas! Ahora, hablemos un poco más sobre tu experiencia profesional. ¿Puedes contarme sobre un proyecto desafiante en el que hayas trabajado recientemente?",
+      text: "CONECTAR CON EL BACKEND",
       sender: "bot",
     },
   ]);
@@ -66,7 +66,7 @@ const Chatbot1 = () => {
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
       
       <div className="bg-custom-blue-gradient w-full py-4 text-center shadow-lg">
-        <h1 className="text-yellow-400 text-4xl font-bold">Generador de Promesa de Valor</h1>
+        <h1 className="text-yellow-400 text-4xl font-bold">Generador de Estrategia</h1>
         <p className="text-white">
           Conversa con el asistente para mejorar tu Estrategia
         </p>
@@ -75,7 +75,8 @@ const Chatbot1 = () => {
       <div className="mt-24 bg-white w-full max-w-4xl rounded-lg shadow-lg">
         
         <div className="bg-gray-200 px-4 py-2 rounded-t-lg border-b border-gray-300">
-          <h2 className="text-center text-lg font-bold">Conversación con el Asistente</h2>
+          <h1 className="text-center text-2xl m-2 font-bold">Conversación con el Asistente</h1>
+          <h3 className="mb-3">Responde las preguntas del Asistente para poder construir tu Estrategia</h3>
         </div>
         
         <div className="p-4 overflow-auto h-80 flex flex-col space-y-4">
@@ -93,9 +94,9 @@ const Chatbot1 = () => {
               </div>
               {message.sender === "bot" && (
                 <img
-                  src="https://storage.googleapis.com/a1aa/image/GeGeQvWuDwnXhUdlf2TdMv9cPQBUUCvgpHONEdYUfP8IyGuPB.jpg"
+                  src="https://static.vecteezy.com/system/resources/thumbnails/007/225/199/small_2x/robot-chat-bot-concept-illustration-vector.jpg"
                   alt="Asistente"
-                  className="ml-2 w-8 h-8 rounded-full object-cover"
+                  className="ml-2 w-10 h-10 rounded-full object-cover"
                 />
               )}
             </div>
