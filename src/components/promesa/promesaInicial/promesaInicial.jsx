@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setThreadId } from "../../../redux/slices/threadSlice";
+import { sendChatRequest } from "../../../services/apiService";
 import { useNavigate } from "react-router-dom";
-import { sendMessageToBot } from "../../../api";
 
-const Promesa = () => {
+const PromesaInicial = () => {
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState({
     question1: "",
@@ -26,10 +28,7 @@ const Promesa = () => {
       question:
         "¿Cuál es tu diferenciador principal frente a otros profesionales de tu área?",
     },
-    { id: "question4", 
-      question: 
-        "¿Quién es tu audiencia objetivo ideal?" 
-    },
+    { id: "question4", question: "¿Quién es tu audiencia objetivo ideal?" },
   ];
 
   const handleChange = (e) => {
@@ -49,21 +48,40 @@ const Promesa = () => {
     if (step > 1) setStep(step - 1);
   };
 
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleSubmit = async () => {
     try {
-      // Envía las respuestas al backend
-      const response = await sendMessageToBot(answers);
+      console.log("Usuario en Redux:", user);
+  
+      // Texto estático inicial y final
+      const staticStart = "Te estoy enviando una serie de preguntas con sus repuestas";
+      const staticEnd = "Analiza las respuestas y anda tomándolo en cuenta. Tu respuesta a este chat debe ser una pregunta complementaria a las anteriores.";
+  
+      // Concatenar preguntas con respuestas
+      const dynamicContent = questions.map((q) => {
+        const answer = answers[q.id] || "Sin respuesta";
+        return `${q.question}: ${answer}`;
+      }).join("\n");
+  
+      // Crear el input final
+      const input = `${staticStart}\n${dynamicContent}\n${staticEnd}`;
+  
+      // Enviar datos a la API
+      const response = await sendChatRequest(input);
       console.log("Datos enviados correctamente:", response);
-      navigate("/chat");
+  
+      // Guardar el thread_id en Redux
+      dispatch(setThreadId(response.thread_id));
+      navigate("/chat", { state: { initialResponse: response.response } });
     } catch (error) {
       console.error("Error al enviar datos al backend:", error);
-      navigate("/chat");
     }
   };
 
   const currentQuestion = questions[step - 1];
-
-  const navigate = useNavigate();
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
@@ -124,4 +142,4 @@ const Promesa = () => {
   );
 };
 
-export default Promesa;
+export default PromesaInicial;

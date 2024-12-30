@@ -1,19 +1,30 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { sendMessageToBot } from "../../../api";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import { sendChatRequest } from "../../../services/apiService";
 
 const Chatbot1 = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "CONECTAR CON EL BACKEND",
-      sender: "bot",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [botMessageCount, setBotMessageCount] = useState(1);
   const [errorCount, setErrorCount] = useState(0);
+
+  const threadId = useSelector((state) => state.thread.threadId); // Obtener thread_id de Redux
   const navigate = useNavigate();
+  const location = useLocation(); // Obtener el estado pasado desde navigate
+
+  const initialBotResponse = location.state?.initialResponse; // Acceder al response inicial
+
+  // Mostrar mensaje inicial del chatbot
+  useEffect(() => {
+    setMessages([
+      {
+        id: 1,
+        text: initialBotResponse || "¡Hola! Continuemos construyendo tu promesa de valor. ¿Cómo puedo ayudarte?",
+        sender: "bot",
+      },
+    ]);
+  }, [initialBotResponse]);
 
   const handleSend = async () => {
     if (inputValue.trim() !== "") {
@@ -23,13 +34,13 @@ const Chatbot1 = () => {
       setInputValue("");
 
       try {
-        // Envía el mensaje al backend y espera la respuesta del bot
-        const botResponse = await sendMessageToBot(inputValue);
+        // Envía el mensaje al backend con thread_id
+        const botResponse = await sendChatRequest(inputValue, threadId);
 
         // Agrega la respuesta del bot a la lista de mensajes
         setMessages((prevMessages) => [
           ...prevMessages,
-          { id: prevMessages.length + 1, text: botResponse.text, sender: "bot" },
+          { id: prevMessages.length + 1, text: botResponse.response, sender: "bot" },
         ]);
 
         // Incrementa el contador de mensajes del bot
@@ -64,21 +75,19 @@ const Chatbot1 = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
-      
       <div className="bg-custom-blue-gradient w-full py-4 text-center shadow-lg">
         <h1 className="text-yellow-400 text-4xl font-bold">Generador de Promesa de Valor</h1>
         <p className="text-white">
           Crea tu propuesta de valor única en una experiencia interactiva
         </p>
       </div>
-      
+
       <div className="mt-24 bg-white w-full max-w-4xl rounded-lg shadow-lg">
-        
         <div className="bg-gray-200 px-4 py-2 rounded-t-lg border-b border-gray-300">
           <h1 className="text-center text-2xl m-2 font-bold">Conversación con el Asistente</h1>
           <h3 className="mb-3">Responde las preguntas del Asistente para poder construir tu Promesa de Valor</h3>
         </div>
-        
+
         <div className="p-4 overflow-auto h-80 flex flex-col space-y-4">
           {messages.map((message) => (
             <div
@@ -102,7 +111,7 @@ const Chatbot1 = () => {
             </div>
           ))}
         </div>
-  
+
         <div className="flex items-center p-2 bg-white border-t border-gray-300 rounded-b-lg">
           <input
             className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -119,17 +128,17 @@ const Chatbot1 = () => {
           </button>
         </div>
       </div>
-      
+
       {(botMessageCount >= 3 || errorCount >= 2) && (
-          <div className="flex justify-center py-4">
-            <button
-              className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
-              onClick={() => navigate("/promesaFinal")}
-            >
-              Continuar
-            </button>
-          </div>
-        )}
+        <div className="flex justify-center py-4">
+          <button
+            className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
+            onClick={() => navigate("/promesaFinal")}
+          >
+            Continuar
+          </button>
+        </div>
+      )}
     </div>
   );
 };

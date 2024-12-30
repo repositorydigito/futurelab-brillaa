@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { sendUserData } from "../../api";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/slices/userSlice";
+import { registerUser } from "../../services/apiService";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -17,14 +20,14 @@ const Login = () => {
 
   const handleSubmit = async () => {
     try {
-      // Usar la función del archivo api.js
-      const response = await sendUserData(formData);
+      const { token } = await registerUser(formData.name, formData.email);
+      dispatch(setUser({ name: formData.name, email: formData.email, token }));
+      localStorage.setItem("authToken", token);
       setShowModal(false);
       navigate("/promise");
     } catch (error) {
       console.error("Error al enviar los datos:", error);
       setShowModal(false);
-      navigate("/promise");
     }
   };
 
