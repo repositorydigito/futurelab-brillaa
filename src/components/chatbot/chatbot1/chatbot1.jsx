@@ -8,6 +8,7 @@ const Chatbot1 = () => {
   const [inputValue, setInputValue] = useState("");
   const [botMessageCount, setBotMessageCount] = useState(1);
   const [errorCount, setErrorCount] = useState(0);
+  const [isInteractionComplete, setIsInteractionComplete] = useState(false);
 
   const threadId = useSelector((state) => state.thread.threadId); // Obtener thread_id de Redux
   const navigate = useNavigate();
@@ -27,29 +28,51 @@ const Chatbot1 = () => {
   }, [initialBotResponse]);
 
   const handleSend = async () => {
-    if (inputValue.trim() !== "") {
-      // Agrega el mensaje del usuario a la lista
+    if (inputValue.trim() !== "" && !isInteractionComplete) {
+      // Si aún no se completan las interacciones, procesa normalmente
       const newMessage = { id: messages.length + 1, text: inputValue, sender: "user" };
       setMessages([...messages, newMessage]);
       setInputValue("");
-
+  
       try {
         // Envía el mensaje al backend con thread_id
         const botResponse = await sendChatRequest(inputValue, threadId);
-
+  
         // Agrega la respuesta del bot a la lista de mensajes
         setMessages((prevMessages) => [
           ...prevMessages,
           { id: prevMessages.length + 1, text: botResponse.response, sender: "bot" },
         ]);
-
+  
         // Incrementa el contador de mensajes del bot
-        setBotMessageCount(botMessageCount + 1);
+        const newBotMessageCount = botMessageCount + 1;
+        setBotMessageCount(newBotMessageCount);
         setErrorCount(0); // Reinicia el contador de errores al tener éxito
+  
+        // Si se alcanzan 3 interacciones, envía el template como input
+        if (newBotMessageCount >= 3) {
+          const template = `Esta es la ultima respuesta a entregar: ${botResponse.response}
+          Ahora solo debes responder que debe dar click en Continuar para poder Generar la promesa de Valor.`;
+  
+          // Enviar el template al backend
+          const templateResponse = await sendChatRequest(template, threadId);
+  
+          // Agregar la respuesta del template al chat
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: prevMessages.length + 1,
+              text: templateResponse.response,
+              sender: "bot",
+            },
+          ]);
+  
+          setIsInteractionComplete(true); // Bloquear nuevas interacciones
+        }
       } catch (error) {
         console.error("Error al comunicarse con el bot:", error);
         setErrorCount((prevErrorCount) => prevErrorCount + 1);
-
+  
         if (errorCount < 2) {
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -72,6 +95,7 @@ const Chatbot1 = () => {
       }
     }
   };
+  
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
@@ -119,10 +143,12 @@ const Chatbot1 = () => {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            disabled={isInteractionComplete} // Deshabilitar input si terminó la interacción
           />
           <button
             className="ml-3 p-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800"
             onClick={handleSend}
+            disabled={isInteractionComplete} // Deshabilitar botón si terminó la interacción
           >
             <i className="fas fa-paper-plane"></i>
           </button>
