@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slices/userSlice";
 import { registerUser } from "../../services/apiService";
+import { TEXTS } from "../../constants/textConstants";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -46,14 +47,12 @@ const Login = () => {
 
         <div className="md:w-1/2 flex items-center justify-center bg-custom-blue-gradient text-white p-8">
           <div className="text-center">
-            <h1 className="text-yellow-400 text-6xl font-bold mb-10">¡BIENVENID@!</h1>
+            <h1 className="text-yellow-400 text-6xl font-bold mb-10">{TEXTS.WELCOME}</h1>
             <h2 className="text-3xl mb-3 font-bold p-8">
-              Construye Tu Marca Personal con Inteligencia Artificial
+            {TEXTS.INITIAL_TITLE}
             </h2>
             <p className="text-2xl mb-8 italic p-5">
-              Te ayudamos a crear una propuesta de valor única, desarrollar una
-              estrategia de contenidos efectiva y ejecutar tus planes con
-              contenido personalizado.
+            {TEXTS.INITIAL_SUBTITLE}
             </p>
             <button
               className="border rounded-lg bg-white text-black font-bold py-2 px-4 rounded hover:bg-gray-300"
@@ -68,8 +67,8 @@ const Login = () => {
       {/* Modal para Nombre y Correo Electrónico */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-8 w-96">
-            <h2 className="text-blue-900 text-xl font-bold mb-4">Proporcione sus datos</h2>
+          <div className="bg-white rounded-lg shadow-lg p-8 w-[600px]">
+            <h2 className="text-blue-900 text-xl font-bold mb-4">{TEXTS.LOGIN_MODAL_TITLE}</h2>
             <div className="mb-4">
               <label className="block text-gray-700 font-semibold mb-2 text-left">Nombre Completo</label>
               <input

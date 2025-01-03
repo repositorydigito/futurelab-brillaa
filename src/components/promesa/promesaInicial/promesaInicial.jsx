@@ -3,33 +3,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { setThreadId } from "../../../redux/slices/threadSlice";
 import { sendChatRequest } from "../../../services/apiService";
 import { useNavigate } from "react-router-dom";
+import { TEXTS } from "../../../constants/textConstants";
+import { INITIALQUESTIONS } from "../../../constants/initialQuestions";
 
 const PromesaInicial = () => {
   const [step, setStep] = useState(1);
-  const [answers, setAnswers] = useState({
-    question1: "",
-    question2: "",
-    question3: "",
-    question4: "",
-  });
+  const [answers, setAnswers] = useState(
+    INITIALQUESTIONS.reduce((acc, q) => ({ ...acc, [q.id]: "" }), {})
+  );
 
-  const questions = [
-    {
-      id: "question1",
-      question: "¿Cuál es tu profesión o experiencia principal?",
-    },
-    {
-      id: "question2",
-      question:
-        "¿Qué problema específico resuelves para tus clientes o empleadores?",
-    },
-    {
-      id: "question3",
-      question:
-        "¿Cuál es tu diferenciador principal frente a otros profesionales de tu área?",
-    },
-    { id: "question4", question: "¿Quién es tu audiencia objetivo ideal?" },
-  ];
+  const currentQuestion = INITIALQUESTIONS[step - 1];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,10 +20,10 @@ const PromesaInicial = () => {
   };
 
   const handleNext = () => {
-    if (step < questions.length) {
+    if (step < INITIALQUESTIONS.length) {
       setStep(step + 1);
     } else {
-      handleSubmit(); // Envía los datos al backend al finalizar
+      handleSubmit();
     }
   };
 
@@ -58,10 +41,10 @@ const PromesaInicial = () => {
   
       // Texto estático inicial y final
       const staticStart = "Te estoy enviando una serie de preguntas con sus repuestas";
-      const staticEnd = "Analiza las respuestas y anda tomándolo en cuenta. Tu respuesta a este chat debe ser una pregunta complementaria a las anteriores.";
+      const staticEnd = "Analiza las respuestas y tómalo en cuenta. Tu respuesta a este chat debe ser una pregunta complementaria a las anteriores.";
   
       // Concatenar preguntas con respuestas
-      const dynamicContent = questions.map((q) => {
+      const dynamicContent = INITIALQUESTIONS.map((q) => {
         const answer = answers[q.id] || "Sin respuesta";
         return `${q.question}: ${answer}`;
       }).join("\n");
@@ -81,17 +64,14 @@ const PromesaInicial = () => {
     }
   };
 
-  const currentQuestion = questions[step - 1];
-
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
       <div className="bg-custom-blue-gradient w-full py-4 text-center shadow-lg">
         <h1 className="text-yellow-400 text-4xl font-bold">
-          Generador de Promesa de Valor
+        {TEXTS.GENERATOR_TITLE}
         </h1>
         <p className="text-white">
-          Responde algunas preguntas y deja que nuestra IA te guíe en cada paso.
-          ¡Es rápido, fácil y personalizado!
+          {TEXTS.GENERATOR_SUBTITLE}
         </p>
       </div>
 
@@ -99,13 +79,13 @@ const PromesaInicial = () => {
         <div className="p-6">
           <div className="text-center mb-4">
             <h2 className="bg-gray-200 p-4 rounded-lg text-xl font-semibold">
-              Paso {step} de {questions.length}
+            Paso {step} de {INITIALQUESTIONS.length}
             </h2>
             <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
               <div
                 className="bg-custom-blue-gradient h-2.5 rounded-full"
-                style={{ width: `${(step / questions.length) * 100}%` }}
-              ></div>
+                style={{ width: `${(step / INITIALQUESTIONS.length) * 100}%` }}
+                ></div>
             </div>
           </div>
           <div className="mb-4">
@@ -130,10 +110,10 @@ const PromesaInicial = () => {
               </button>
             )}
             <button
-              onClick={step < questions.length ? handleNext : handleSubmit}
+              onClick={step < INITIALQUESTIONS.length ? handleNext : handleSubmit}
               className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
             >
-              {step < questions.length ? "Siguiente" : "Finalizar"}
+              {step < INITIALQUESTIONS.length ? "Siguiente" : "Finalizar"}
             </button>
           </div>
         </div>
