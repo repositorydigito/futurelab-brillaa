@@ -4,6 +4,7 @@ const initialState = {
   name: '',
   email: '',
   token: '',
+  leadId: "",
 };
 
 const userSlice = createSlice({
@@ -14,11 +15,13 @@ const userSlice = createSlice({
       state.name = action.payload.name;
       state.email = action.payload.email;
       state.token = action.payload.token;
+      state.leadId = action.payload.leadId;
     },
     clearUser(state) {
       state.name = '';
       state.email = '';
       state.token = '';
+      state.leadId = '';
     },
   },
 });

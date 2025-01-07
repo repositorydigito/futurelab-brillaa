@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slices/userSlice";
-import { registerUser } from "../../services/apiService";
+import { registerUser } from "../../services/bffLeadClient";
 import { TEXTS } from "../../constants/textConstants";
 
 const Login = () => {
@@ -21,9 +21,10 @@ const Login = () => {
 
   const handleSubmit = async () => {
     try {
-      const { token } = await registerUser(formData.name, formData.email);
-      dispatch(setUser({ name: formData.name, email: formData.email, token }));
+      const { token, lead_id } = await registerUser(formData.name, formData.email);
+      dispatch(setUser({ name: formData.name, email: formData.email, token, leadId: lead_id }));
       localStorage.setItem("authToken", token);
+      localStorage.setItem("leadId", lead_id); 
       setShowModal(false);
       navigate("/promise");
     } catch (error) {

@@ -16,20 +16,6 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-export const registerUser = async (name, email) => {
-  try {
-    // Simulación de API por ahora
-    const response = {
-      data: {
-        token: 'mocked-token',
-      },
-    };
-    return response.data;
-  } catch (error) {
-    console.error('Error en registerUser:', error);
-    throw error;
-  }
-};
 
 export const sendChatRequest = async (input, threadId = null) => {
   try {
