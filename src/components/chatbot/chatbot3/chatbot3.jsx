@@ -1,84 +1,155 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { sendMessageToBot } from "../../../api";
+import { useSelector, useDispatch } from "react-redux";
+import { sendChatAgent3Request } from "../../../services/apiService";
+import { TEXTS } from "../../../constants/textConstants";
+import { setValuePublications } from "../../../redux/slices/threadSlice";
 
-const Chatbot1 = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "CONECTAR CON EL BACKEND",
-      sender: "bot",
-    },
-  ]);
+const Chatbot3 = () => {
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [botMessageCount, setBotMessageCount] = useState(1);
+  const [botMessageCount, setBotMessageCount] = useState(0);
   const [errorCount, setErrorCount] = useState(0);
+  const [isInteractionComplete, setIsInteractionComplete] = useState(false);
+
+  const valueBrandStrategy = useSelector((state) => state.thread.valueBrandStrategy);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Mostrar el mensaje inicial del bot al cargar el componente
+  useEffect(() => {
+    setMessages([
+      {
+        id: 1,
+        text: "Hola, puedo ayudarte si me compartes un link o tópico sobre el cual quieras hacer una publicación en Linkedin.",
+        sender: "bot",
+      },
+    ]);
+  }, []);
+
   const handleSend = async () => {
-    if (inputValue.trim() !== "") {
-      // Agrega el mensaje del usuario a la lista
+    if (inputValue.trim() !== "" && !isInteractionComplete) {
+      // Agregar el mensaje del usuario
       const newMessage = { id: messages.length + 1, text: inputValue, sender: "user" };
       setMessages([...messages, newMessage]);
+
+      // Preparar mensaje para el backend
+      const isFinalInteraction = botMessageCount + 1 === 1;
+      const complementaryMessage = isFinalInteraction
+      ? `Esta es la última interacción: "${inputValue}". Genera 3 publicaciones basadas en esta noticia o tópico y considera también la estrategia generada: "${valueBrandStrategy}". Responde únicamente con un JSON válido con este formato:
+    
+    {
+      "publicaciones": [
+        {
+          "titulo": "Título de la publicación",
+          "contenido": "Contenido de la publicación",
+          "fecha": "Fecha de publicación en formato YYYY-MM-DD"
+        },
+        {
+          "titulo": "Título de la publicación",
+          "contenido": "Contenido de la publicación",
+          "fecha": "Fecha de publicación en formato YYYY-MM-DD"
+        },
+        {
+          "titulo": "Título de la publicación",
+          "contenido": "Contenido de la publicación",
+          "fecha": "Fecha de publicación en formato YYYY-MM-DD"
+        }
+      ]
+    }
+    
+    No incluyas texto adicional fuera del JSON. Tu respuesta debe ser un JSON válido como el ejemplo anterior.`
+      : `¿Tienes alguna otra noticia o tópico del cual quieras hacer una publicación en LinkedIn?`;
+    
       setInputValue("");
 
       try {
-        // Envía el mensaje al backend y espera la respuesta del bot
-        const botResponse = await sendMessageToBot(inputValue);
+        // Enviar mensaje al backend
+        const botResponse = await sendChatAgent3Request(complementaryMessage);
 
-        // Agrega la respuesta del bot a la lista de mensajes
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { id: prevMessages.length + 1, text: botResponse.text, sender: "bot" },
-        ]);
+        if (!isFinalInteraction) {
+          // Mostrar la respuesta del bot solo si no es la última interacción
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { id: prevMessages.length + 1, text: botResponse.response, sender: "bot" },
+          ]);
+        }
 
-        // Incrementa el contador de mensajes del bot
-        setBotMessageCount(botMessageCount + 1);
-        setErrorCount(0); // Reinicia el contador de errores al tener éxito
+        const newBotMessageCount = botMessageCount + 1;
+        setBotMessageCount(newBotMessageCount);
+
+        // Si es la última interacción, bloquear nuevas interacciones y mostrar mensaje final
+        if (isFinalInteraction) {
+          try {
+            const parsedResponse = JSON.parse(botResponse.response);
+            if (parsedResponse.publicaciones && Array.isArray(parsedResponse.publicaciones)) {
+              dispatch(setValuePublications(parsedResponse.publicaciones));
+            } else {
+              console.error("El JSON no tiene la estructura esperada:", parsedResponse);
+            }
+          } catch (error) {
+            console.error("Error al parsear el JSON:", error, botResponse.response);
+          }
+
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: prevMessages.length + 1,
+              text: "Haz click en continuar para ver las publicaciones sugeridas.",
+              sender: "bot",
+            },
+          ]);
+          setIsInteractionComplete(true);
+        }
+
+        // Reiniciar contador de errores en caso de éxito
+        setErrorCount(0);
       } catch (error) {
         console.error("Error al comunicarse con el bot:", error);
         setErrorCount((prevErrorCount) => prevErrorCount + 1);
 
-        if (errorCount < 2) {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              id: prevMessages.length + 1,
-              text: "Hubo un error al obtener la respuesta del bot. Por favor, intenta nuevamente.",
-              sender: "bot",
-            },
-          ]);
-        } else {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              id: prevMessages.length + 1,
-              text: "Ha ocurrido un error varias veces. Por favor, continúa al siguiente paso.",
-              sender: "bot",
-            },
-          ]);
+        // Mostrar mensaje de error
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: prevMessages.length + 1,
+            text:
+              errorCount < 2
+                ? "Hubo un error al obtener la respuesta del bot. Por favor, intenta nuevamente."
+                : "Ha ocurrido un error varias veces. Por favor, continúa al siguiente paso.",
+            sender: "bot",
+          },
+        ]);
+
+        if (errorCount >= 2) {
+          setIsInteractionComplete(true); // Bloquear nuevas interacciones después de varios errores
         }
       }
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
-      
       <div className="bg-custom-blue-gradient w-full py-4 text-center shadow-lg">
         <h1 className="text-yellow-400 text-4xl font-bold">Ejecución de Estrategia</h1>
         <p className="text-white">
-          Conversa con el Asistente para ejecutar tu estrategia
+          Conversa con el Asistente para generar publicaciones relevantes
         </p>
       </div>
-      
+
       <div className="mt-24 bg-white w-full max-w-4xl rounded-lg shadow-lg">
-        
-      <div className="bg-gray-200 px-4 py-2 rounded-t-lg border-b border-gray-300">
-          <h1 className="text-center text-2xl m-2 font-bold">Conversación con el Asistente</h1>
-          <h3 className="mb-3">Responde las preguntas del Asistente para poder ejecutar tu estrategia</h3>
+        <div className="bg-gray-200 px-4 py-2 rounded-t-lg border-b border-gray-300">
+          <h1 className="text-center text-2xl m-2 font-bold">{TEXTS.STRATEGY_BOT_TITLE}</h1>
+          <h3 className="mb-3">{TEXTS.STRATEGY_BOT_SUBTITLE}</h3>
         </div>
-        
+
         <div className="p-4 overflow-auto h-80 flex flex-col space-y-4">
           {messages.map((message) => (
             <div
@@ -102,7 +173,7 @@ const Chatbot1 = () => {
             </div>
           ))}
         </div>
-  
+
         <div className="flex items-center p-2 bg-white border-t border-gray-300 rounded-b-lg">
           <input
             className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -110,28 +181,37 @@ const Chatbot1 = () => {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyPress}
+            disabled={isInteractionComplete}
           />
           <button
             className="ml-3 p-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800"
             onClick={handleSend}
+            disabled={isInteractionComplete}
           >
             <i className="fas fa-paper-plane"></i>
           </button>
         </div>
       </div>
-      
-      {(botMessageCount >= 3 || errorCount >= 2) && (
-          <div className="flex justify-center py-4">
-            <button
-              className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
-              onClick={() => navigate("/publicaciones")}
-            >
-              Continuar
-            </button>
-          </div>
-        )}
+
+      <div className="mt-6 bg-yellow-100 border-l-4 border-yellow-500 p-4 max-w-4xl w-full rounded-lg shadow-lg">
+        <p className="text-yellow-800 font-bold text-lg">
+          Nota: {TEXTS.STRATEGY_BOT_GUIDE}
+        </p>
+      </div>
+
+      {isInteractionComplete && (
+        <div className="flex justify-center py-4">
+          <button
+            className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
+            onClick={() => navigate("/publicaciones")}
+          >
+            Continuar
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Chatbot1;
+export default Chatbot3;

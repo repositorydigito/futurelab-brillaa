@@ -1,32 +1,35 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { jsPDF } from "jspdf";
+import { TEXTS } from "../../constants/textConstants";
 
 const Estrategia = () => {
   const navigate = useNavigate();
+  const valueBrandStrategy = useSelector((state) => state.thread.valueBrandStrategy); // Obtener valor desde Redux
 
-  const handleDownloadPDF = async () => {
-    try {
-      // Simulación de solicitud al backend para obtener el PDF
-      const response = await fetch("/api/generate-pdf", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Error al generar el PDF");
-      }
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "estrategia.pdf";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Error al descargar el PDF:", error);
-    }
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+
+    // Configurar el título
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Estrategia Personalizada", 105, 20, { align: "center" });
+
+    // Agregar contenido de la estrategia
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    const content = `Tu estrategia generada:\n\n${valueBrandStrategy}`;
+    const margin = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxWidth = pageWidth - margin * 2;
+
+    doc.text(content, margin, 40, {
+      maxWidth: maxWidth,
+    });
+
+    // Descargar el PDF
+    doc.save("estrategia.pdf");
   };
 
   return (
@@ -41,7 +44,7 @@ const Estrategia = () => {
       <div className="mt-24 bg-white w-full max-w-4xl rounded-lg shadow-lg">
         <div className="p-6">
           <div className="bg-gray-200 px-4 py-2 rounded-t-lg border-b border-gray-300">
-            <h2 className="text-center m-4 text-2xl font-bold">¡Tu Estrategia está lista!</h2>
+            <h2 className="text-center m-4 text-2xl font-bold">{TEXTS.STRATEGY_TITLE}</h2>
           </div>
           <div className="p-3 rounded-b-lg border border-gray-300">
             <p className="text-center text-gray-600 mb-6">
@@ -68,7 +71,7 @@ const Estrategia = () => {
               className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
               onClick={() => navigate("/chat3")}
             >
-              Ejecutar Estrategia
+              {TEXTS.STRATEGY_BUTTON}
             </button>
           </div>
         </div>

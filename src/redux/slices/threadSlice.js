@@ -4,6 +4,7 @@ const initialState = {
   threadId: '',
   valueProposition: "",
   valueBrandStrategy: "",
+  valuePublications: "",
 };
 
 const threadSlice = createSlice({
@@ -22,8 +23,11 @@ const threadSlice = createSlice({
     setValueBrandStrategy: (state, action) => {
       state.valueBrandStrategy = action.payload; 
     },
+    setValuePublications: (state, action) => {
+      state.valuePublications = action.payload; 
+    },
   },
 });
 
-export const { setThreadId, clearThreadId, setValueProposition, setValueBrandStrategy } = threadSlice.actions;
+export const { setThreadId, clearThreadId, setValueProposition, setValueBrandStrategy, setValuePublications } = threadSlice.actions;
 export default threadSlice.reducer;

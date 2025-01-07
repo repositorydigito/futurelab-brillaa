@@ -20,6 +20,14 @@ export const TEXTS = {
     QUESTIONNAIRE_BOT_TITLE: "Personalicemos tu Estrategia de Marca",
     QUESTIONNAIRE_BOT_SUBTITLE: "Conversa con la Agente IA BrillaA para darle forma a tu Estrategia de Marca",
 
+    STRATEGY_TITLE: "¡Felicidades! Ya tienes una estrategia para tu marca personal, ¿Quieres quedarte ahí?",
+    STRATEGY_BUTTON: "No, creemos contenido",
+
+    STRATEGY_BOT_TITLE: "Pongamos tu estrategia en acción",
+    STRATEGY_BOT_SUBTITLE: "Cuéntale a la Agente IA BrillaA el tema o tópico sobre el cual quieres hacer una publicación en Linkedin",
+    STRATEGY_BOT_GUIDE: 'Puedes compartirle el link de una sola noticia. Para ello, utiliza el siguiente prompt "Toma este link y léelo, en base a ello …".',
+
+
     BOT_INITIAL_MESSAGE: "¡Hola! Continuemos construyendo tu promesa de valor. ¿Cómo puedo ayudarte?",
     ERROR_MESSAGE: "Hubo un error al obtener la respuesta del bot. Por favor, intenta nuevamente.",
     CONTINUE_BUTTON: "Continuar",

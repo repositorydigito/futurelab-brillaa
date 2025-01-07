@@ -1,31 +1,50 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { jsPDF } from "jspdf";
 
 const Publicaciones = () => {
   const navigate = useNavigate();
-  const handleDownloadPDF = async () => {
-    try {
-      // Simulación de solicitud al backend para obtener el PDF
-      const response = await fetch("/api/generate-pdf", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Error al generar el PDF");
-      }
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "estrategia.pdf";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Error al descargar el PDF:", error);
+  const valuePublications = useSelector((state) => state.thread.valuePublications || []); // Asegúrate de que sea un array
+
+  const handleDownloadPDF = () => {
+    if (!Array.isArray(valuePublications) || valuePublications.length === 0) {
+      console.error("No hay publicaciones disponibles para generar el PDF.");
+      return;
     }
+
+    const doc = new jsPDF();
+
+    // Configurar el título del documento
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Publicaciones Personalizadas", 105, 20, { align: "center" });
+
+    // Configurar las publicaciones
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    let y = 40; // Posición inicial para el contenido
+
+    valuePublications.forEach((publicacion, index) => {
+      if (y > 270) { // Crear una nueva página si el contenido excede
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(`Publicación ${index + 1}:`, 10, y);
+      y += 10;
+      doc.setFont("helvetica", "bold");
+      doc.text(publicacion.titulo, 10, y);
+      y += 10;
+      doc.setFont("helvetica", "normal");
+      doc.text(doc.splitTextToSize(publicacion.contenido, 190), 10, y);
+      y += 20;
+      doc.setFont("helvetica", "italic");
+      doc.text(`Fecha: ${publicacion.fecha}`, 10, y);
+      y += 10;
+    });
+
+    // Descargar el archivo PDF
+    doc.save("publicaciones.pdf");
   };
 
   return (
@@ -49,29 +68,28 @@ const Publicaciones = () => {
           <div className="bg-gray-100 text-center py-2 border border-gray-300">
             <h3 className="text-lg font-medium">Publicaciones</h3>
           </div>
+
+          {/* Renderizar publicaciones dinámicamente */}
           <div className="divide-y divide-gray-300 rounded-b-lg border border-gray-300">
-            <div className="py-4 px-6 flex text-left">
-              <i className="fas fa-lightbulb text-yellow-400 mr-2"></i>
-              <p>
-                Tip del día: 3 técnicas simples para mejorar el rendimiento de
-                tu aplicación web que puedes implementar hoy mismo.
+            {Array.isArray(valuePublications) && valuePublications.length > 0 ? (
+              valuePublications.map((publicacion, index) => (
+                <div key={index} className="py-4 px-6 flex flex-col text-left">
+                  <h3 className="text-blue-900 font-bold mb-2">
+                    {publicacion.titulo}
+                  </h3>
+                  <p className="text-gray-800">{publicacion.contenido}</p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Fecha de publicación: {publicacion.fecha}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="py-4 px-6 text-gray-500">
+                No hay publicaciones disponibles.
               </p>
-            </div>
-            <div className="py-4 px-6 flex text-left">
-              <i className="fas fa-lightbulb text-yellow-400 mr-2"></i>
-              <p>
-                Tip del día: 3 técnicas simples para mejorar el rendimiento de
-                tu aplicación web que puedes implementar hoy mismo.
-              </p>
-            </div>
-            <div className="py-4 px-6 flex text-left">
-              <i className="fas fa-lightbulb text-yellow-400 mr-2"></i>
-              <p>
-                Tip del día: 3 técnicas simples para mejorar el rendimiento de
-                tu aplicación web que puedes implementar hoy mismo.
-              </p>
-            </div>
+            )}
           </div>
+
           <div className="flex justify-between mt-8 space-x-4">
             <button
               className="bg-white text-blue-900 border border-blue-900 rounded-lg px-4 py-2 hover:bg-blue-900 hover:text-white hover:shadow-lg transition-all duration-300 ease-in-out"
