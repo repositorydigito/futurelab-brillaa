@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { STRATEGY_QUESTIONS } from "../../constants/strategyQuestions";
+import { INITIALQUESTIONS } from "../../constants/initialQuestions";
+import { TEXTS } from "../../constants/textConstants";
+import { sendChatRequest } from "../../services/apiService";
 
 const Cuestionario = () => {
   const [formData, setFormData] = useState(
@@ -10,11 +14,55 @@ const Cuestionario = () => {
     }, {})
   );
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  // Obtener las respuestas iniciales desde Redux
+  const initialAnswers = useSelector((state) => state.questions.answers);
+  // Obtener la propuesta de valor desde Redux
+  const valueProposition = useSelector((state) => state.thread.valueProposition);
 
-  const handleNavigation = () => {
-    console.log("Form Data Submitted: ", formData);
-    navigate("/chat2");
+  const handleNavigation = async () => {
+    try {
+      setIsSubmitting(true);
+
+      // Construir contenido dinámico del cuestionario inicial (preguntas 1, 2, y 4)
+      const initialContent = [1, 2, 4].map((index) => {
+        const question = INITIALQUESTIONS[index - 1];
+        const answer = initialAnswers[question.id] || "Sin respuesta";
+        return `${question.question}: ${answer}`;
+      }).join("\n");
+
+      // Construir contenido dinámico del cuestionario de estrategia
+      const strategyContent = STRATEGY_QUESTIONS.map((question) => {
+        const answer = formData[question.id] || "Sin respuesta";
+        return `${question.label}: ${answer}`;
+      }).join("\n");
+
+      // Agregar la propuesta de valor
+      const valuePropositionContent = valueProposition
+        ? `Propuesta de Valor: ${valueProposition}`
+        : "Propuesta de Valor: No disponible";
+
+      // Complementary message
+      const complementaryMessage =
+        "Aquí tienes las respuestas combinadas del cuestionario inicial, la propuesta de valor y el cuestionario de estrategia. Analiza y proporciona una pregunta complementaria que ayude a completar la estrategia de marca.";
+
+
+      // Construir el input final
+      const input = `${initialContent}\n\n${valuePropositionContent}\n\n${strategyContent}\n\n${complementaryMessage}`;
+
+      // Enviar datos a la API
+      const response = await sendChatRequest(input);
+      console.log("API Response:", response);
+
+      // Navegar a chat2 con la respuesta inicial del bot
+      navigate("/chat2", { state: { cuestionarioResponse: response.response } });
+    } catch (error) {
+      console.error("Error al enviar datos a la API:", error);
+      alert("Hubo un error al enviar los datos. Por favor, inténtalo nuevamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -26,10 +74,10 @@ const Cuestionario = () => {
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
       <div className="bg-custom-blue-gradient w-full py-4 text-center shadow-lg">
         <h1 className="text-yellow-400 text-4xl font-bold">
-          Generador de Estrategia
+          {TEXTS.QUESTIONNAIRE_TITLE}
         </h1>
         <p className="text-white">
-          Responde las siguientes preguntas para ayudarnos a crear tu estrategia
+          {TEXTS.QUESTIONNAIRE_SUBTITLE}
         </p>
       </div>
 
@@ -58,11 +106,16 @@ const Cuestionario = () => {
       </div>
       <div className="text-center m-8">
         <button
-          type="submit"
-          className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
+          type="button"
+          className={`bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 ${
+            isSubmitting
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
+          }`}
           onClick={handleNavigation}
+          disabled={isSubmitting} // Deshabilitar mientras se envía
         >
-          Enviar Respuestas
+          {isSubmitting ? "Enviando..." : "Enviar Respuestas"}
         </button>
       </div>
     </div>

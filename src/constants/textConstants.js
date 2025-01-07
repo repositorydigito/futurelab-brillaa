@@ -14,6 +14,12 @@ export const TEXTS = {
     BUILD: "Una promesa de valor no es nada sin acción. ¿Quieres generar la estrategia para llevar tu marca personal al siguiente nivel?",
     BUTTON_BUILD: "Si, generemos la estrategia",
 
+    QUESTIONNAIRE_TITLE: "Construyamos tu Estrategia de Marca Personal",
+    QUESTIONNAIRE_SUBTITLE: "Nuestra IA tiene las siguientes preguntas para ti. Contéstalas brevemente, y te ayudará a crear una estrategia a medida",
+
+    QUESTIONNAIRE_BOT_TITLE: "Personalicemos tu Estrategia de Marca",
+    QUESTIONNAIRE_BOT_SUBTITLE: "Conversa con la Agente IA BrillaA para darle forma a tu Estrategia de Marca",
+
     BOT_INITIAL_MESSAGE: "¡Hola! Continuemos construyendo tu promesa de valor. ¿Cómo puedo ayudarte?",
     ERROR_MESSAGE: "Hubo un error al obtener la respuesta del bot. Por favor, intenta nuevamente.",
     CONTINUE_BUTTON: "Continuar",
