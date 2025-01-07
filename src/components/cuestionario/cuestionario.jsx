@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { STRATEGY_QUESTIONS } from "../../constants/strategyQuestions";
 import { INITIALQUESTIONS } from "../../constants/initialQuestions";
 import { TEXTS } from "../../constants/textConstants";
-import { sendChatRequest } from "../../services/apiService";
+import { setThreadId } from "../../redux/slices/threadSlice";
+import { sendChatAgent2Request } from "../../services/apiService";
 
 const Cuestionario = () => {
   const [formData, setFormData] = useState(
@@ -20,6 +21,7 @@ const Cuestionario = () => {
   const initialAnswers = useSelector((state) => state.questions.answers);
   // Obtener la propuesta de valor desde Redux
   const valueProposition = useSelector((state) => state.thread.valueProposition);
+  const dispatch = useDispatch();
 
   const handleNavigation = async () => {
     try {
@@ -52,9 +54,10 @@ const Cuestionario = () => {
       const input = `${initialContent}\n\n${valuePropositionContent}\n\n${strategyContent}\n\n${complementaryMessage}`;
 
       // Enviar datos a la API
-      const response = await sendChatRequest(input);
+      const response = await sendChatAgent2Request(input);
       console.log("API Response:", response);
-
+      // Guardar el thread_id en Redux
+      dispatch(setThreadId(response.thread_id));
       // Navegar a chat2 con la respuesta inicial del bot
       navigate("/chat2", { state: { cuestionarioResponse: response.response } });
     } catch (error) {

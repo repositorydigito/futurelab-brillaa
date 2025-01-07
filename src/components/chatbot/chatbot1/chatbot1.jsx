@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { sendChatRequest } from "../../../services/apiService";
+import { trackEvent  } from "../../../services/bffLeadClient";
 import { TEXTS } from "../../../constants/textConstants";
 import { setValueProposition } from "../../../redux/slices/threadSlice";
 
@@ -12,11 +13,13 @@ const Chatbot1 = () => {
   const [isInteractionComplete, setIsInteractionComplete] = useState(false);
 
   const threadId = useSelector((state) => state.thread.threadId); // Obtener thread_id de Redux
+  const leadId = useSelector((state) => state.thread.leadId); // Obtener lead_id del Redux
   const navigate = useNavigate();
   const location = useLocation(); // Obtener el estado pasado desde navigate
   const dispatch = useDispatch();
 
   const initialBotResponse = location.state?.initialResponse; // Acceder al response inicial
+  const maxInteractions = 3;
 
   // Mostrar mensaje inicial del chatbot
   useEffect(() => {
@@ -36,10 +39,12 @@ const Chatbot1 = () => {
       const newMessage = { id: messages.length + 1, text: inputValue, sender: "user" };
       setMessages([...messages, newMessage]);
 
-      const isFinalInteraction = botMessageCount + 1 === 3; // Verificar si es la última interacción
+      const maxInteractions = parseInt(process.env.REACT_APP_MAX_INTERACTIONS_CHATBOT, 10) || 3; 
+
+      const isFinalInteraction = botMessageCount + 1 === maxInteractions;
       const complementaryMessage = isFinalInteraction
-        ? `Esta es la ultima respuesta: "${inputValue}". Ahora debes generar la promesa de valor en base a todas las respuestas que se proporcionó.`
-        : inputValue;
+        ? `Esta es la última respuesta: "${inputValue}". Por favor, genera exclusivamente la promesa de valor basada en todas las respuestas previas. No incluyas introducciones ni explicaciones adicionales.`
+        : `Esta es la respuesta: "${inputValue}". Responde siempre con otra pregunta complementaria para generar la promesa de valor.`
 
       setInputValue("");
 
@@ -91,6 +96,22 @@ const Chatbot1 = () => {
     if (e.key === "Enter") {
       e.preventDefault(); // Prevenir comportamiento por defecto del Enter
       handleSend();
+    }
+  };
+
+
+  const handleContinue = async () => {
+    try {
+      // Realizar la llamada a trackEvent
+      await trackEvent("evt_promesaValor", leadId, {
+        page: "PromesaValor",
+        action: "Access",
+      });
+
+      // Navegar a la siguiente página después de registrar el evento
+      navigate("/promesaFinal");
+    } catch (error) {
+      console.error("Error al registrar el evento:", error);
     }
   };
 
@@ -151,11 +172,23 @@ const Chatbot1 = () => {
         </div>
       </div>
 
+      <div className="py-4 text-center">
+        {!isInteractionComplete ? (
+          <p className="text-gray-600">
+            Te quedan {maxInteractions - botMessageCount} interacciones para construir tu promesa de valor.
+          </p>
+        ) : (
+          <p className="text-gray-600">
+            Has llegado al límite de interacciones. Haz clic en "Continuar" para generar tu promesa de valor.
+          </p>
+        )}
+      </div>
+
       {isInteractionComplete && (
         <div className="flex justify-center py-4">
           <button
             className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
-            onClick={() => navigate("/promesaFinal")}
+            onClick={handleContinue} 
           >
             Continuar
           </button>

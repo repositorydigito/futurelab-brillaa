@@ -19,6 +19,7 @@ const Chatbot2 = () => {
   const threadId = useSelector((state) => state.thread.threadId); // Obtener el thread_id desde Redux
   const dispatch = useDispatch();
 
+  const maxInteractions = parseInt(process.env.REACT_APP_MAX_INTERACTIONS_CHATBOT, 10) || 3; 
   // Mostrar el mensaje del bot al cargar el componente
   useEffect(() => {
     setMessages([
@@ -40,7 +41,7 @@ const Chatbot2 = () => {
       const isFinalInteraction = botMessageCount + 1 === 3;
       const complementaryMessage = isFinalInteraction
         ? `Esta es la última interacción: "${inputValue}". Ten en cuenta todas las preguntas y respuestas proporcionadas anteriormente y genera un cierre para esta estrategia.`
-        : inputValue;
+        : `Esta es la respuesta: "${inputValue}". Responde siempre con otra pregunta complementaria para generar la estrategia de valor.`
       setInputValue("");
 
       try {
@@ -158,6 +159,18 @@ const Chatbot2 = () => {
             <i className="fas fa-paper-plane"></i>
           </button>
         </div>
+      </div>
+
+      <div className="py-4 text-center">
+        {!isInteractionComplete ? (
+          <p className="text-gray-600">
+            Te quedan {maxInteractions - botMessageCount} interacciones para construir tu estrategia de marca.
+          </p>
+        ) : (
+          <p className="text-gray-600">
+            Has llegado al límite de interacciones. Haz clic en "Continuar" para generar tu promesa de valor.
+          </p>
+        )}
       </div>
 
       {isInteractionComplete && (
