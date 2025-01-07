@@ -4,6 +4,7 @@ import { setThreadId } from "../../../redux/slices/threadSlice";
 import { sendChatRequest } from "../../../services/apiService";
 import { useNavigate } from "react-router-dom";
 import { TEXTS } from "../../../constants/textConstants";
+import { setQuestions, setAnswer } from "../../../redux/slices/questionsSlice";
 import { INITIALQUESTIONS } from "../../../constants/initialQuestions";
 
 const PromesaInicial = () => {
@@ -17,6 +18,7 @@ const PromesaInicial = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setAnswers((prev) => ({ ...prev, [name]: value }));
+    dispatch(setAnswer({ questionId: name, answer: value })); // Guardar en Redux
   };
 
   const handleNext = () => {
