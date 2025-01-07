@@ -1,28 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { STRATEGY_QUESTIONS } from "../../constants/strategyQuestions";
 
 const Cuestionario = () => {
-  const [formData, setFormData] = useState({
-    achievements: "",
-    certifications: "",
-    technologies: "",
-  });
+  const [formData, setFormData] = useState(
+    STRATEGY_QUESTIONS.reduce((acc, question) => {
+      acc[question.id] = "";
+      return acc;
+    }, {})
+  );
 
   const navigate = useNavigate();
 
   const handleNavigation = () => {
+    console.log("Form Data Submitted: ", formData);
     navigate("/chat2");
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Data Submitted: ", formData);
-    // You can send the formData to your bot backend here
   };
 
   return (
@@ -41,93 +38,21 @@ const Cuestionario = () => {
           <div className="bg-gray-200 px-4 py-2 rounded-lg border-b border-gray-300">
             <h2 className="text-center text-lg font-bold">Cuestionario</h2>
           </div>
-          <form onSubmit={handleSubmit}>
-            <div className="mt-8 mb-6 text-left">
-              <label className="block text-gray-700 font-semibold mb-2">
-                ¿Cuáles son los 3 principales logros en tu carrera profesional?
-              </label>
-              <textarea
-                type="text"
-                name="achievements"
-                value={formData.achievements}
-                onChange={handleChange}
-                className="w-full p-4 border border-gray-300 rounded-lg"
-                placeholder="Escribe tus logros aquí..."
-              ></textarea>
-            </div>
-
-            <div className="mb-6 text-left">
-              <label className="block text-gray-700 font-semibold mb-2">
-                ¿Qué certificaciones o educación formal respaldan tu
-                experiencia?
-              </label>
-              <textarea
-                type="text"
-                name="certifications"
-                value={formData.certifications}
-                onChange={handleChange}
-                className="w-full p-4 border border-gray-300 rounded-lg"
-                placeholder="Escribe tus certificaciones aquí..."
-              ></textarea>
-            </div>
-
-            <div className="mb-6 text-left">
-              <label className="block text-gray-700 font-semibold mb-2">
-                ¿Cuáles son las tecnologías o metodologías en las que te
-                especializas?
-              </label>
-              <textarea
-                type="text"
-                name="technologies"
-                value={formData.technologies}
-                onChange={handleChange}
-                className="w-full p-4 border border-gray-300 rounded-lg"
-                placeholder="Escribe tus tecnologías aquí..."
-              ></textarea>
-            </div>
-            <div className="mb-6 text-left">
-              <label className="block text-gray-700 font-semibold mb-2">
-                ¿Cuáles son los 3 principales logros en tu carrera profesional?
-              </label>
-              <textarea
-                type="text"
-                name="achievements"
-                value={formData.achievements}
-                onChange={handleChange}
-                className="w-full p-4 border border-gray-300 rounded-lg"
-                placeholder="Escribe tus logros aquí..."
-              ></textarea>
-            </div>
-
-            <div className="mb-6 text-left">
-              <label className="block text-gray-700 font-semibold mb-2">
-                ¿Qué certificaciones o educación formal respaldan tu
-                experiencia?
-              </label>
-              <textarea
-                type="text"
-                name="certifications"
-                value={formData.certifications}
-                onChange={handleChange}
-                className="w-full p-4 border border-gray-300 rounded-lg"
-                placeholder="Escribe tus certificaciones aquí..."
-              ></textarea>
-            </div>
-
-            <div className="mb-6 text-left">
-              <label className="block text-gray-700 font-semibold mb-2">
-                ¿Cuáles son las tecnologías o metodologías en las que te
-                especializas?
-              </label>
-              <textarea
-                type="text"
-                name="technologies"
-                value={formData.technologies}
-                onChange={handleChange}
-                className="w-full p-4 border border-gray-300 rounded-lg"
-                placeholder="Escribe tus tecnologías aquí..."
-              ></textarea>
-            </div>
+          <form>
+            {STRATEGY_QUESTIONS.map((question) => (
+              <div className="mb-6 text-left" key={question.id}>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  {question.label}
+                </label>
+                <textarea
+                  name={question.id}
+                  value={formData[question.id]}
+                  onChange={handleChange}
+                  className="w-full p-4 border border-gray-300 rounded-lg"
+                  placeholder={question.placeholder}
+                ></textarea>
+              </div>
+            ))}
           </form>
         </div>
       </div>

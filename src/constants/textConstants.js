@@ -11,6 +11,9 @@ export const TEXTS = {
     PERFORMANCE_TITLE: "Personalicemos tu Promesa de Valor",
     PERFORMANCE_SUBTITLE: "Conversa con la Agente IA BrillaA para darle forma a tu Promesa de Valor",
 
+    BUILD: "Una promesa de valor no es nada sin acción. ¿Quieres generar la estrategia para llevar tu marca personal al siguiente nivel?",
+    BUTTON_BUILD: "Si, generemos la estrategia",
+
     BOT_INITIAL_MESSAGE: "¡Hola! Continuemos construyendo tu promesa de valor. ¿Cómo puedo ayudarte?",
     ERROR_MESSAGE: "Hubo un error al obtener la respuesta del bot. Por favor, intenta nuevamente.",
     CONTINUE_BUTTON: "Continuar",

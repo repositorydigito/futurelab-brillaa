@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { sendChatRequest } from "../../../services/apiService";
 import { TEXTS } from "../../../constants/textConstants";
+import { setValueProposition } from "../../../redux/slices/threadSlice";
 
 const Chatbot1 = () => {
   const [messages, setMessages] = useState([]);
@@ -13,6 +14,7 @@ const Chatbot1 = () => {
   const threadId = useSelector((state) => state.thread.threadId); // Obtener thread_id de Redux
   const navigate = useNavigate();
   const location = useLocation(); // Obtener el estado pasado desde navigate
+  const dispatch = useDispatch();
 
   const initialBotResponse = location.state?.initialResponse; // Acceder al response inicial
 
@@ -25,6 +27,7 @@ const Chatbot1 = () => {
         sender: "bot",
       },
     ]);
+    setBotMessageCount(0);
   }, [initialBotResponse]);
 
   const handleSend = async () => {
@@ -58,6 +61,8 @@ const Chatbot1 = () => {
 
         // Si es la última interacción, agregar el mensaje final
         if (isFinalInteraction) {
+          // Guardamos la propuesta de valor
+          dispatch(setValueProposition(botResponse.response));
           setMessages((prevMessages) => [
             ...prevMessages,
             {
@@ -79,6 +84,13 @@ const Chatbot1 = () => {
           },
         ]);
       }
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevenir comportamiento por defecto del Enter
+      handleSend();
     }
   };
 
@@ -126,6 +138,7 @@ const Chatbot1 = () => {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyPress} // Manejar tecla Enter
             disabled={isInteractionComplete} // Deshabilitar input si terminó la interacción
           />
           <button

@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   threadId: '',
+  valueProposition: "",
 };
 
 const threadSlice = createSlice({
@@ -14,8 +15,11 @@ const threadSlice = createSlice({
     clearThreadId(state) {
       state.threadId = '';
     },
+    setValueProposition: (state, action) => {
+      state.valueProposition = action.payload; 
+    },
   },
 });
 
-export const { setThreadId, clearThreadId } = threadSlice.actions;
+export const { setThreadId, clearThreadId, setValueProposition } = threadSlice.actions;
 export default threadSlice.reducer;
