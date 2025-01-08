@@ -14,7 +14,7 @@ const Chatbot3 = () => {
   const [isInteractionComplete, setIsInteractionComplete] = useState(false);
 
   const valueBrandStrategy = useSelector((state) => state.thread.valueBrandStrategy);
-  const leadId = useSelector((state) => state.thread.leadId); // Obtener lead_id del Redux
+  const leadId = localStorage.getItem('leadId');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

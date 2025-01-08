@@ -13,7 +13,7 @@ const Chatbot1 = () => {
   const [isInteractionComplete, setIsInteractionComplete] = useState(false);
 
   const threadId = useSelector((state) => state.thread.threadId); // Obtener thread_id de Redux
-  const leadId = useSelector((state) => state.thread.leadId); // Obtener lead_id del Redux
+  const leadId = localStorage.getItem('leadId');
   const navigate = useNavigate();
   const location = useLocation(); // Obtener el estado pasado desde navigate
   const dispatch = useDispatch();

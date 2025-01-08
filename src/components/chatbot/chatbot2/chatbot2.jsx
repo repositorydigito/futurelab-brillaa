@@ -18,7 +18,7 @@ const Chatbot2 = () => {
   const dispatch = useDispatch();
   const cuestionarioBotResponse = location.state?.cuestionarioResponse; // Respuesta del Cuestionario
   const threadId = useSelector((state) => state.thread.threadId); // Obtener el thread_id desde Redux
-  const leadId = useSelector((state) => state.thread.leadId); // Obtener lead_id del Redux
+  const leadId = localStorage.getItem('leadId'); 
 
   const maxInteractions = parseInt(process.env.REACT_APP_MAX_INTERACTIONS_CHATBOT, 10) || 3; 
   // Mostrar el mensaje del bot al cargar el componente

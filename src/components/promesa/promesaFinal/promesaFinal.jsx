@@ -1,35 +1,58 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { trackEvent  } from "../../../services/bffLeadClient";
+import { trackEvent, registerUser } from "../../../services/bffLeadClient";
+import { setUser } from "../../../redux/slices/userSlice";
 import { TEXTS } from "../../../constants/textConstants";
 
 const PromesaFinal = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPopup, setShowPopup] = useState(false); // Estado para controlar el modal
+  const [otp, setOtp] = useState(""); // Estado para el OTP
+  const [error, setError] = useState(""); // Estado para mensajes de error
 
   // Obtener la propuesta de valor desde Redux
   const valueProposition = useSelector((state) => state.thread.valueProposition);
-  const leadId = useSelector((state) => state.thread.leadId); // Obtener lead_id del Redux
+  const name = useSelector((state) => state.user.name);
+  const email = useSelector((state) => state.user.email);
 
   const handleStrategyClick = () => {
     setShowPopup(true); // Activar el modal
   };
 
   const handleModalClose = async () => {
+    if (otp.length !== 6) {
+      setError("El passcode debe tener 6 dígitos.");
+      return;
+    }
+
     try {
+      // Validar el OTP con registerUser
+      const { token, lead_id } = await registerUser(name, email, otp);
+
+      // Actualizar el token y leadId en Redux y localStorage
+      dispatch(setUser({ name, email, token, leadId: lead_id }));
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("leadId", lead_id);
+
       // Realizar la llamada a trackEvent
-      await trackEvent("evt_BuildStrategy", leadId, {
+      await trackEvent("evt_BuildStrategy", lead_id, {
         page: "Generemos estrategia",
         action: "click",
+        passcode: otp,
       });
 
       setShowPopup(false); // Cerrar el modal
       navigate("/cuestionario"); // Navegar al cuestionario después de cerrar el modal
     } catch (error) {
-      console.error("Error al registrar el evento:", error);
+      if (error.response && error.response.data.detail === "Invalid passcode") {
+        setError("El passcode es inválido. Por favor, intenta nuevamente.");
+      } else {
+        console.error("Error al registrar el evento:", error);
+        setError("Ocurrió un error inesperado. Por favor, intenta nuevamente.");
+      }
     }
-    
   };
 
   return (
@@ -46,9 +69,7 @@ const PromesaFinal = () => {
       <div className="flex justify-center mt-24">
         <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-4xl">
           <div className="bg-gray-200 px-4 py-2 rounded-t-lg border-b border-gray-300">
-            <h2 className="text-center text-lg font-bold">
-              Tu Promesa de Valor
-            </h2>
+            <h2 className="text-center text-lg font-bold">Tu Promesa de Valor</h2>
           </div>
           <div className="bg-white-100 p-4 rounded-b-lg border border-gray-300 mb-6">
             {/* Mostrar la propuesta de valor almacenada en Redux */}
@@ -81,9 +102,23 @@ const PromesaFinal = () => {
               <h1 className="text-yellow-500 text-3xl font-bold mb-8">
                 {TEXTS.BUILD}
               </h1>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => {
+                    setOtp(e.target.value);
+                    setError(""); // Limpiar el error al escribir
+                  }}
+                  maxLength={6}
+                  placeholder="Ingresa el passcode que enviamos a tu correo."
+                  className="text-center w-1/2 py-2 px-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                />
+                {error && <p className="text-red-500 mt-2">{error}</p>}
+              </div>
               <button
                 className="bg-yellow-500 text-white text-lg font-semibold py-3 px-6 rounded-full"
-                onClick={handleModalClose} // Cerrar el modal y navegar
+                onClick={handleModalClose} // Validar y navegar
               >
                 {TEXTS.BUTTON_BUILD}
               </button>
