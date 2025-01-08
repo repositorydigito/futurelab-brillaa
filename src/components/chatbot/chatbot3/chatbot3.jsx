@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { sendChatAgent3Request } from "../../../services/apiService";
 import { TEXTS } from "../../../constants/textConstants";
 import { setValuePublications } from "../../../redux/slices/threadSlice";
+import { trackEvent  } from "../../../services/bffLeadClient";
 
 const Chatbot3 = () => {
   const [messages, setMessages] = useState([]);
@@ -13,6 +14,7 @@ const Chatbot3 = () => {
   const [isInteractionComplete, setIsInteractionComplete] = useState(false);
 
   const valueBrandStrategy = useSelector((state) => state.thread.valueBrandStrategy);
+  const leadId = useSelector((state) => state.thread.leadId); // Obtener lead_id del Redux
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -135,6 +137,20 @@ const Chatbot3 = () => {
     }
   };
 
+  const handleContinue = async () => {
+    try {
+      // Realizar la llamada a trackEvent
+      await trackEvent("evt_publicaciones", leadId, {
+        page: "GeneraPublicaciones",
+        action: "click",
+      });
+
+      navigate("/publicaciones");
+    } catch (error) {
+      console.error("Error al registrar el evento:", error);
+    }
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
       <div className="bg-custom-blue-gradient w-full py-4 text-center shadow-lg">
@@ -204,7 +220,7 @@ const Chatbot3 = () => {
         <div className="flex justify-center py-4">
           <button
             className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
-            onClick={() => navigate("/publicaciones")}
+            onClick={handleContinue} 
           >
             Continuar
           </button>

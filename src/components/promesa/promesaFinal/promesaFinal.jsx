@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { trackEvent  } from "../../../services/bffLeadClient";
 import { TEXTS } from "../../../constants/textConstants";
 
 const PromesaFinal = () => {
@@ -9,14 +10,26 @@ const PromesaFinal = () => {
 
   // Obtener la propuesta de valor desde Redux
   const valueProposition = useSelector((state) => state.thread.valueProposition);
+  const leadId = useSelector((state) => state.thread.leadId); // Obtener lead_id del Redux
 
   const handleStrategyClick = () => {
     setShowPopup(true); // Activar el modal
   };
 
-  const handleModalClose = () => {
-    setShowPopup(false); // Cerrar el modal
-    navigate("/cuestionario"); // Navegar al cuestionario después de cerrar el modal
+  const handleModalClose = async () => {
+    try {
+      // Realizar la llamada a trackEvent
+      await trackEvent("evt_BuildStrategy", leadId, {
+        page: "Generemos estrategia",
+        action: "click",
+      });
+
+      setShowPopup(false); // Cerrar el modal
+      navigate("/cuestionario"); // Navegar al cuestionario después de cerrar el modal
+    } catch (error) {
+      console.error("Error al registrar el evento:", error);
+    }
+    
   };
 
   return (

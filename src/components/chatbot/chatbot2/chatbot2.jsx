@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { sendChatRequest } from "../../../services/apiService";
 import { TEXTS } from "../../../constants/textConstants";
 import { setValueBrandStrategy } from "../../../redux/slices/threadSlice";
-
+import { trackEvent  } from "../../../services/bffLeadClient";
 
 const Chatbot2 = () => {
   const [messages, setMessages] = useState([]);
@@ -15,9 +15,10 @@ const Chatbot2 = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const cuestionarioBotResponse = location.state?.cuestionarioResponse; // Respuesta del Cuestionario
   const threadId = useSelector((state) => state.thread.threadId); // Obtener el thread_id desde Redux
-  const dispatch = useDispatch();
+  const leadId = useSelector((state) => state.thread.leadId); // Obtener lead_id del Redux
 
   const maxInteractions = parseInt(process.env.REACT_APP_MAX_INTERACTIONS_CHATBOT, 10) || 3; 
   // Mostrar el mensaje del bot al cargar el componente
@@ -102,6 +103,20 @@ const Chatbot2 = () => {
     }
   };
 
+  const handleContinue = async () => {
+    try {
+      // Realizar la llamada a trackEvent
+      await trackEvent("evt_estrategiaMarca", leadId, {
+        page: "EstrategiaMarca",
+        action: "Access",
+      });
+
+      navigate("/estrategia");
+    } catch (error) {
+      console.error("Error al registrar el evento:", error);
+    }
+  };
+  
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
       <div className="bg-custom-blue-gradient w-full py-4 text-center shadow-lg">
@@ -177,7 +192,7 @@ const Chatbot2 = () => {
         <div className="flex justify-center py-4">
           <button
             className="bg-blue-900 text-white border border-blue-900 rounded-lg px-4 py-2 hover:bg-white hover:text-blue-900 hover:shadow-lg transition-all duration-300 ease-in-out"
-            onClick={() => navigate("/estrategia")}
+            onClick={handleContinue} 
           >
             Continuar
           </button>
