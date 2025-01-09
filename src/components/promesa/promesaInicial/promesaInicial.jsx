@@ -38,9 +38,7 @@ const PromesaInicial = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    try {
-      console.log("Usuario en Redux:", user);
-  
+    try {  
       // Texto estático inicial y final
       const staticStart = "Te estoy enviando una serie de preguntas con sus repuestas";
       const staticEnd = "Analiza las respuestas y tómalo en cuenta. Tu respuesta a este chat debe ser una pregunta complementaria a las anteriores.";
@@ -53,11 +51,8 @@ const PromesaInicial = () => {
   
       // Crear el input final
       const input = `${staticStart}\n${dynamicContent}\n${staticEnd}`;
-  
       // Enviar datos a la API
-      const response = await sendChatRequest(input);
-      console.log("Datos enviados correctamente:", response);
-  
+      const response = await sendChatRequest(input);  
       // Guardar el thread_id en Redux
       dispatch(setThreadId(response.thread_id));
       navigate("/chat", { state: { initialResponse: response.response } });

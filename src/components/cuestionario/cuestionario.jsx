@@ -55,7 +55,6 @@ const Cuestionario = () => {
 
       // Enviar datos a la API
       const response = await sendChatAgent2Request(input);
-      console.log("API Response:", response);
       // Guardar el thread_id en Redux
       dispatch(setThreadId(response.thread_id));
       // Navegar a chat2 con la respuesta inicial del bot

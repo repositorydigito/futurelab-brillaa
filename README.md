@@ -1,74 +1,93 @@
-<<<<<<< HEAD
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# FutureLab - BRILLAA
 
-## Available Scripts
+Este proyecto es una aplicación web desarrollada con React.
 
-In the project directory, you can run:
+## Requisitos
 
-### `npm start`
+- Node.js (versión recomendada: 16.x o superior)
+- npm o yarn para gestionar dependencias
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Instalación
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Clona este repositorio en tu máquina local:
+   ```bash
+   git clone <URL_DEL_REPOSITORIO>
+   ```
 
-### `npm test`
+2. Navega al directorio del proyecto:
+   ```bash
+   cd cafetaipa
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. Instala las dependencias necesarias:
+   ```bash
+   npm install
+   # o si prefieres yarn
+   yarn install
+   ```
 
-### `npm run build`
+## Configuración
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Duplica el archivo `.env.example` y renómbralo como `.env`:
+   ```bash
+   cp .env.example .env
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. Configura las variables de entorno en el archivo `.env` según tus necesidades.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Scripts disponibles
 
-### `npm run eject`
+En el archivo `package.json` encontrarás los siguientes scripts que puedes ejecutar:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- `npm start` o `yarn start`: Inicia la aplicación en modo de desarrollo.
+- `npm run build` o `yarn build`: Construye la aplicación para producción.
+- `npm test` o `yarn test`: Ejecuta pruebas.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Dependencias principales
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Este proyecto utiliza las siguientes dependencias clave:
+{
+  "@fortawesome/fontawesome-free": "^6.7.2",
+  "@reduxjs/toolkit": "^2.5.0",
+  "axios": "^1.7.9",
+  "cra-template": "1.2.0",
+  "dotenv": "^16.4.7",
+  "https-browserify": "^1.0.0",
+  "jspdf": "^2.5.2",
+  "process": "^0.11.10",
+  "react": "^19.0.0",
+  "react-app-rewired": "^2.2.1",
+  "react-dom": "^19.0.0",
+  "react-redux": "^9.2.0",
+  "react-router-dom": "^7.0.2",
+  "react-scripts": "5.0.1",
+  "stream-http": "^3.2.0",
+  "tailwind": "^4.0.0",
+  "web-vitals": "^4.2.4"
+}
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Dependencias de desarrollo
 
-## Learn More
+Dependencias utilizadas para desarrollo y configuración:
+{
+  "tailwindcss": "^3.4.16"
+}
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Personalización
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Este proyecto utiliza:
+- **Tailwind CSS** para estilos. Configuración en `tailwind.config.js`.
+- **PostCSS** para procesar estilos. Configuración en `postcss.config.js`.
 
-### Code Splitting
+Si necesitas ajustar configuraciones adicionales, revisa `config-overrides.js`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Estructura del proyecto
 
-### Analyzing the Bundle Size
+- `src/`: Contiene el código fuente principal de la aplicación.
+- `public/`: Recursos públicos que no pasan por el empaquetador.
+- `.env.example`: Plantilla para las variables de entorno.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Autor
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-=======
-# Cafe-Taipa
->>>>>>> a0470a34d96e52a83b1f6c55d5d6bb2496f4c32c
+- Digito Labs
