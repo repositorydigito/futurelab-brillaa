@@ -12,12 +12,12 @@ Este proyecto es una aplicación web desarrollada con React.
 
 1. Clona este repositorio en tu máquina local:
    ```bash
-   git clone <URL_DEL_REPOSITORIO>
+   git clone https://github.com/repositorydigito/futurelab-brillaa
    ```
 
 2. Navega al directorio del proyecto:
    ```bash
-   cd cafetaipa
+   cd futurelab-brillaa
    ```
 
 3. Instala las dependencias necesarias:
