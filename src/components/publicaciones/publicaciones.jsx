@@ -34,13 +34,13 @@ const Publicaciones = () => {
       y += 10;
       doc.setFont("helvetica", "bold");
       doc.text(publicacion.titulo, 10, y);
-      y += 10;
+      y += 15;
       doc.setFont("helvetica", "normal");
-      doc.text(doc.splitTextToSize(publicacion.contenido, 190), 10, y);
-      y += 20;
+      doc.text(doc.splitTextToSize(publicacion.contenido, 190), 15, y);
+      y += 35;
       doc.setFont("helvetica", "italic");
       doc.text(`Fecha: ${publicacion.fecha}`, 10, y);
-      y += 10;
+      y += 20;
     });
 
     // Descargar el archivo PDF
@@ -103,6 +103,11 @@ const Publicaciones = () => {
             >
               <i className="fas fa-download mr-2"></i> Descargar PDF
             </button>
+          </div>
+          {/* Nota para el usuario */}
+          <div className="text-center mt-4 text-gray-600 text-sm">
+            <p>
+            ¡Recuerda! Puedes copiar directamente cualquiera de las publicaciones anteriores y adaptarlas para tus redes sociales. Comparte contenido profesional con facilidad y rapidez.            </p>
           </div>
         </div>
       </div>

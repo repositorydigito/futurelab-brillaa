@@ -47,7 +47,7 @@ const Cuestionario = () => {
 
       // Complementary message
       const complementaryMessage =
-        "Aquí tienes las respuestas combinadas del cuestionario inicial, la propuesta de valor y el cuestionario de estrategia. Analiza y proporciona una pregunta complementaria que ayude a completar la estrategia de marca.";
+        "Aquí tienes las respuestas a las preguntas de CONTEXTO, la promesa de valor del usuario y las respuestas de preguntas de INSUMO. Analiza y proporciona una primera versión del entregable de estrategia de marca, ordenado en viñetas.";
 
 
       // Construir el input final

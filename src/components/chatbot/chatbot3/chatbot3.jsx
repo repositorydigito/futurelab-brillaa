@@ -38,7 +38,7 @@ const Chatbot3 = () => {
       // Preparar mensaje para el backend
       const isFinalInteraction = botMessageCount + 1 === parseInt(process.env.REACT_APP_MAX_INTERACTIONS_CHATBOT_3, 10) || 1;
       const complementaryMessage = isFinalInteraction
-      ? `Esta es la última interacción: "${inputValue}". Genera 3 publicaciones basadas en esta noticia o tópico y considera también la estrategia generada: "${valueBrandStrategy}". Responde únicamente con un JSON válido con este formato:
+      ? `Esta es la última interacción: "${inputValue}". Genera 3 publicaciones basadas en esta noticia o tópico consideran también la estrategia generada: "${valueBrandStrategy}". Cada una de estas publicaciones debe corresponder a cada una de las 3 opciones que conoces. Responde únicamente con un JSON válido con este formato, donde cada pieza de contenido tenga 600 caracteres:
     
     {
       "publicaciones": [

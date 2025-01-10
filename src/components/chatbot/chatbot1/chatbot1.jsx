@@ -43,8 +43,8 @@ const Chatbot1 = () => {
 
       const isFinalInteraction = botMessageCount + 1 === maxInteractions;
       const complementaryMessage = isFinalInteraction
-        ? `Esta es la última respuesta: "${inputValue}". Por favor, genera exclusivamente la promesa de valor basada en todas las respuestas previas. No incluyas introducciones ni explicaciones adicionales.`
-        : `Esta es la respuesta: "${inputValue}". Responde siempre con otra pregunta complementaria para generar la promesa de valor.`
+        ? `Esta es la última respuesta: "${inputValue}". Por favor, genera exclusivamente una última versión de la promesa de valor basada en la última respuesta. No incluyas introducciones ni explicaciones adicionales`
+        : `Esta es la respuesta: "${inputValue}".Responde con una versión diferente de la promesa de valor que incluya la respuesta. Pregunta si es que el usuario está conforme con la promesa de valor e indica cómo es que esta promesa va de acuerdo con la información que ha compartido.`
 
       setInputValue("");
 

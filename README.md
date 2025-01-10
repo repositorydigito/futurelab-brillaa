@@ -88,6 +88,11 @@ Si necesitas ajustar configuraciones adicionales, revisa `config-overrides.js`.
 - `public/`: Recursos públicos que no pasan por el empaquetador.
 - `.env.example`: Plantilla para las variables de entorno.
 
+## Documentación Adicional
+
+Para una descripción más detallada sobre la arquitectura del sistema y su funcionamiento, consulta el siguiente documento:
+- [Detalles de Arquitectura](docs/ARCHITECTURE.md)
+
 ## Autor
 
-- Digito Labs
+- Digito

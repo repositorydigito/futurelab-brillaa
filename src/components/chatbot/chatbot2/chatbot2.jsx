@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { sendChatRequest } from "../../../services/apiService";
+import { sendChatAgent2Request } from "../../../services/apiService";
 import { TEXTS } from "../../../constants/textConstants";
 import { setValueBrandStrategy } from "../../../redux/slices/threadSlice";
 import { trackEvent  } from "../../../services/bffLeadClient";
@@ -41,13 +41,13 @@ const Chatbot2 = () => {
       // Preparar mensaje a enviar al backend
       const isFinalInteraction = botMessageCount + 1 === 3;
       const complementaryMessage = isFinalInteraction
-        ? `Esta es la última interacción: "${inputValue}". Ten en cuenta todas las preguntas y respuestas proporcionadas anteriormente y genera un cierre para esta estrategia.`
-        : `Esta es la respuesta: "${inputValue}". Responde siempre con otra pregunta complementaria para generar la estrategia de valor.`
+        ? `Esta es la última interacción: "${inputValue}". Ten en cuenta todas las preguntas y respuestas de INSUMO y CONTEXTO proporcionadas anteriormente y genera un cierre para esta estrategia. `
+        : `Esta es la respuesta: "${inputValue}". Responde siempre con otra versión del entregable de estrategia de marca, que incluya lo que el usuario dice en la respuesta.`
       setInputValue("");
 
       try {
          // Enviar el mensaje al backend
-        const botResponse = await sendChatRequest(complementaryMessage, threadId);
+        const botResponse = await sendChatAgent2Request(complementaryMessage, threadId);
 
         if (!isFinalInteraction) {
           // Mostrar la respuesta del bot solo si no es la última interacción

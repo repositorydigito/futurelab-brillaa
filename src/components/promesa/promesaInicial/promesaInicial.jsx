@@ -41,7 +41,7 @@ const PromesaInicial = () => {
     try {  
       // Texto estático inicial y final
       const staticStart = "Te estoy enviando una serie de preguntas con sus repuestas";
-      const staticEnd = "Analiza las respuestas y tómalo en cuenta. Tu respuesta a este chat debe ser una pregunta complementaria a las anteriores.";
+      const staticEnd = "Analiza las respuestas y tómalo en cuenta. Tu respuesta a este chat chat debe ser una primera versión de la promesa de valor, y una pregunta que busque validar si es que el usuario está de acuerdo con ello.";
   
       // Concatenar preguntas con respuestas
       const dynamicContent = INITIALQUESTIONS.map((q) => {
